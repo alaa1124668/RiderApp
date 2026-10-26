@@ -26,7 +26,7 @@ def main(page: ft.Page):
 
   search_field = ft.TextField(
       label="ابحث باسم المندوب أو الزون...",
-      prefix_icon=ft.icons.SEARCH,
+      prefix_icon=ft.icons.search,
       border_radius=10,
       text_size=14,
       on_change=lambda e: filter_list(e.data),
@@ -147,6 +147,5 @@ def main(page: ft.Page):
   update_cards(riders_list)
 
 
-# التعديل هنا باستخدام run بدلاً من app
 if __name__ == "__main__":
   ft.run(main)
