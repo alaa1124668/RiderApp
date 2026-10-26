@@ -1,6 +1,11 @@
 import json
-import os
+import urllib.request
 import flet as ft
+
+# استبدل هذا الرابط برابط الـ Raw للملف app_data.json على مستودعك في GitHub
+DATA_URL = (
+    "https://raw.githubusercontent.com/alaa1124668/RiderApp/main/app_data.json"
+)
 
 
 def main(page: ft.Page):
@@ -14,13 +19,14 @@ def main(page: ft.Page):
 
   def load_data():
     nonlocal riders_list
-    if os.path.exists("app_data.json"):
-      try:
-        with open("app_data.json", "r", encoding="utf-8") as f:
-          data = json.load(f)
-          riders_list = data.get("riders", [])
-      except Exception as e:
-        print("Error reading json:", e)
+    try:
+      # سحب البيانات أوتوماتيك من الرابط السحابي مباشرة
+      req = urllib.request.Request(DATA_URL, headers={"User-Agent": "Mozilla/5.0"})
+      with urllib.request.urlopen(req, timeout=10) as response:
+        data = json.loads(response.read().decode("utf-8"))
+        riders_list = data.get("riders", [])
+    except Exception as e:
+      print("Error fetching cloud data:", e)
 
   load_data()
 
@@ -39,7 +45,7 @@ def main(page: ft.Page):
     if not data_to_show:
       cards_column.controls.append(
           ft.Text(
-              "لا توجد بيانات متاحة حالياً.",
+              "لا توجد بيانات متاحة حالياً. تأكد من اتصال الإنترنت!",
               italic=True,
               color=ft.colors.GREY_400,
           )
@@ -122,7 +128,7 @@ def main(page: ft.Page):
   def refresh_clicked(e):
     load_data()
     filter_list(search_field.value)
-    page.snack_bar = ft.SnackBar(ft.Text("تم تحديث البيانات بنجاح!"))
+    page.snack_bar = ft.SnackBar(ft.Text("تم تحديث البيانات من السحابة بنجاح!"))
     page.snack_bar.open = True
     page.update()
 
